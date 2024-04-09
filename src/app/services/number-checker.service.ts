@@ -6,22 +6,27 @@ import { Observable, map, of } from 'rxjs';
 })
 export class NumberCheckerService {
   arrLenght = 100;
-  sourceArr$ = of(
-    Array.from({ length: this.arrLenght }, (item, index) => index + 1)
-  );
+  private _sourceArr = this.createSourceArr(this.arrLenght);
+  get sourceArr() {
+    return this._sourceArr;
+  }
 
-  numbersArr$: Observable<string[]> = this.sourceArr$.pipe(
-    map((numArr) => {
-      return numArr.map((item) => {
-        let result = '';
+  createSourceArr(length: number): number[] {
+    return Array.from({ length: length }, (item, index) => index + 1);
+  }
 
-        result += item % 3 === 0 ? 'Fizz' : '';
-        result += item % 5 === 0 ? 'Buzz' : '';
+  isFizzOrBuzz(arr: number[]): string[] {
+    return arr.map((item) => {
+      let result = '';
 
-        return result || item.toString();
-      });
-    })
-  );
+      result += item % 3 === 0 ? 'Fizz' : '';
+      result += item % 5 === 0 ? 'Buzz' : '';
+
+      return result || item.toString();
+    });
+  }
+
+  numbersArr$: Observable<string[]> = of(this.isFizzOrBuzz(this.sourceArr));
 
   constructor() {}
 }
